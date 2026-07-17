@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chronograph &mdash; Stopwatch</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <main class="watch-card" role="main" aria-label="Stopwatch">
+
+    <!-- Header: brand + running status -->
+    <header class="watch-header">
+      <span class="brand">CHRONO&thinsp;/&thinsp;01</span>
+      <span class="status" id="status" data-state="idle">
+        <span class="status-dot"></span>
+        <span class="status-text">READY</span>
+      </span>
+    </header>
+
+    <!-- Time display: HH : MM : SS : MS -->
+    <section class="display" aria-live="off">
+      <div class="display-row">
+        <span class="time-segment" id="hours">00</span>
+        <span class="colon">:</span>
+        <span class="time-segment" id="minutes">00</span>
+        <span class="colon">:</span>
+        <span class="time-segment" id="seconds">00</span>
+        <span class="colon colon--small">:</span>
+        <span class="time-segment time-segment--ms" id="milliseconds">00</span>
+      </div>
+      <div class="display-labels">
+        <span>HH</span><span>MM</span><span>SS</span><span>MS</span>
+      </div>
+    </section>
+
+    <!-- Progress ring: fills across each second, purely decorative feedback -->
+    <div class="tick-track" aria-hidden="true">
+      <div class="tick-fill" id="tickFill"></div>
+    </div>
+
+    <!-- Controls -->
+    <section class="controls">
+      <button class="btn btn--ghost" id="lapBtn" disabled>
+        Lap
+      </button>
+      <button class="btn btn--primary" id="startPauseBtn">
+        Start
+      </button>
+      <button class="btn btn--ghost" id="resetBtn" disabled>
+        Reset
+      </button>
+    </section>
+
+    <!-- Lap list -->
+    <section class="laps" aria-label="Lap times">
+      <div class="laps-header">
+        <span>Laps</span>
+        <span id="lapCount">0</span>
+      </div>
+      <ol class="laps-list" id="lapsList">
+        <!-- Lap items injected here by script.js -->
+      </ol>
+      <p class="laps-empty" id="lapsEmpty">No laps recorded yet</p>
+    </section>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

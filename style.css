@@ -1,0 +1,392 @@
+/* ==========================================================================
+   TOKENS
+   Palette: deep graphite instrument panel, warm brass/amber accent (the
+   "lit dial" color), cool teal for the lap marker. Two type roles:
+   Space Grotesk for labels/UI, JetBrains Mono for the numeric readout.
+   ========================================================================== */
+:root {
+  --panel-900: #14151a;
+  --panel-800: #1b1d24;
+  --panel-700: #24262f;
+  --panel-600: #33353f;
+  --hairline: #3a3d49;
+
+  --text-hi: #f2f0ea;
+  --text-mid: #9a9caa;
+  --text-low: #5d5f6c;
+
+  --amber: #e8a23d;
+  --amber-dim: #7a5a28;
+  --teal: #4fd1c5;
+  --red: #e8593d;
+
+  --radius-lg: 22px;
+  --radius-sm: 10px;
+
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+  background:
+    radial-gradient(circle at 50% 0%, #202230 0%, #0d0e12 70%);
+  font-family: var(--font-display);
+  color: var(--text-hi);
+}
+
+/* ==========================================================================
+   CARD
+   ========================================================================== */
+.watch-card {
+  width: 100%;
+  max-width: 420px;
+  background: linear-gradient(180deg, var(--panel-800) 0%, var(--panel-900) 100%);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  padding: 28px 26px 30px;
+  box-shadow:
+    0 30px 60px -20px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.02) inset;
+}
+
+.watch-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22px;
+}
+
+.brand {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--text-mid);
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--text-mid);
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--text-low);
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* State-driven status colors, set via data-state attribute in JS */
+.status[data-state="running"] .status-dot {
+  background: var(--teal);
+  box-shadow: 0 0 8px var(--teal);
+  animation: pulse 1s ease-in-out infinite;
+}
+.status[data-state="running"] .status-text::before { content: "RUNNING"; }
+.status[data-state="paused"] .status-dot {
+  background: var(--amber);
+  box-shadow: 0 0 8px var(--amber);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* ==========================================================================
+   DISPLAY
+   ========================================================================== */
+.display {
+  background: var(--panel-900);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+  padding: 22px 12px 14px;
+  text-align: center;
+}
+
+.display-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  font-family: var(--font-mono);
+  line-height: 1;
+}
+
+.time-segment {
+  font-size: clamp(2.4rem, 9vw, 3.2rem);
+  font-weight: 700;
+  color: var(--text-hi);
+  font-variant-numeric: tabular-nums;
+  min-width: 1.9ch;
+  text-align: center;
+}
+
+.time-segment--ms {
+  font-size: clamp(1.4rem, 5vw, 1.8rem);
+  color: var(--amber);
+  align-self: flex-end;
+  padding-bottom: 0.3em;
+}
+
+.colon {
+  font-size: clamp(2rem, 7vw, 2.6rem);
+  color: var(--text-low);
+  padding: 0 2px;
+  transform: translateY(-2px);
+}
+
+.colon--small {
+  color: var(--amber-dim);
+}
+
+.display-labels {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  margin-top: 6px;
+}
+
+.display-labels span {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  color: var(--text-low);
+  width: 4.6ch;
+  text-align: center;
+}
+
+.display-labels span:last-child {
+  color: var(--amber-dim);
+}
+
+/* ==========================================================================
+   TICK TRACK — thin bar that fills once per second, echoing a sweep hand
+   ========================================================================== */
+.tick-track {
+  height: 3px;
+  background: var(--panel-700);
+  border-radius: 2px;
+  margin: 16px 2px 22px;
+  overflow: hidden;
+}
+
+.tick-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--amber-dim), var(--amber));
+  border-radius: 2px;
+}
+
+/* ==========================================================================
+   CONTROLS
+   ========================================================================== */
+.controls {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr 1fr;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.btn {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  padding: 14px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--hairline);
+  cursor: pointer;
+  transition: transform 0.12s ease, background 0.18s ease, border-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.btn:active {
+  transform: scale(0.96);
+}
+
+.btn--primary {
+  background: var(--amber);
+  border-color: var(--amber);
+  color: #1b1300;
+  box-shadow: 0 8px 20px -8px rgba(232, 162, 61, 0.6);
+}
+
+.btn--primary:hover {
+  background: #f0b25a;
+  box-shadow: 0 10px 24px -8px rgba(232, 162, 61, 0.75);
+}
+
+/* Primary button turns red-ish while running, to signal "Pause" */
+.btn--primary[data-running="true"] {
+  background: var(--panel-700);
+  border-color: var(--red);
+  color: var(--red);
+  box-shadow: none;
+}
+
+.btn--primary[data-running="true"]:hover {
+  background: rgba(232, 89, 61, 0.12);
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--text-mid);
+}
+
+.btn--ghost:hover:not(:disabled) {
+  border-color: var(--teal);
+  color: var(--teal);
+}
+
+.btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   LAPS
+   ========================================================================== */
+.laps-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--text-mid);
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--hairline);
+  margin-bottom: 4px;
+}
+
+#lapCount {
+  color: var(--amber);
+}
+
+.laps-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 168px;
+  overflow-y: auto;
+}
+
+.laps-list::-webkit-scrollbar {
+  width: 5px;
+}
+.laps-list::-webkit-scrollbar-thumb {
+  background: var(--panel-600);
+  border-radius: 3px;
+}
+
+.lap-item {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 10px 2px;
+  border-bottom: 1px solid var(--panel-700);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  animation: lap-in 0.25s ease;
+}
+
+.lap-item:last-child {
+  border-bottom: none;
+}
+
+.lap-index {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--text-low);
+  width: 3.4em;
+}
+
+.lap-time {
+  color: var(--text-hi);
+  letter-spacing: 0.02em;
+}
+
+/* Fastest / slowest lap highlights, set dynamically by script.js */
+.lap-item[data-mark="fastest"] .lap-time { color: var(--teal); }
+.lap-item[data-mark="slowest"] .lap-time { color: var(--red); }
+
+.lap-delta {
+  font-size: 11px;
+  color: var(--text-low);
+}
+
+@keyframes lap-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.laps-empty {
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-low);
+  padding: 22px 0 6px;
+  margin: 0;
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+@media (max-width: 420px) {
+  .watch-card {
+    padding: 22px 18px 24px;
+    border-radius: 18px;
+  }
+
+  .controls {
+    gap: 8px;
+  }
+
+  .btn {
+    padding: 13px 6px;
+    font-size: 13px;
+  }
+}
+
+@media (min-width: 600px) {
+  .watch-card {
+    max-width: 460px;
+    padding: 34px 34px 34px;
+  }
+}
+
+/* Respect reduced-motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .status[data-state="running"] .status-dot {
+    animation: none;
+  }
+  .lap-item {
+    animation: none;
+  }
+  .btn {
+    transition: none;
+  }
+}
